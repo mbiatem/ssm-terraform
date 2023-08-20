@@ -51,12 +51,12 @@ resource "aws_subnet" "dev-private-subnet1" {
   }
 }
 
-resource "aws_subnet" "dev-public-subnet2" {
+resource "aws_subnet" "dev-private-subnet2" {
   vpc_id     = aws_vpc.dev-vpc.id
   cidr_block = "10.0.3.0/24"
   availability_zone = "us-east-1b"
 
   tags = {
-    "Name" = "dev-public-subnet2"
+    "Name" = "dev-private-subnet2"
   }
 }
