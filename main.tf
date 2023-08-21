@@ -163,3 +163,74 @@ resource "aws_route_table_association" "private-rt-assoc2" {
   route_table_id = aws_route_table.dev-private-rt2.id
 }
 
+
+resource "aws_security_group" "alb-sg" {
+  name        = "alb-sg"
+  description = "alb-sg"
+  vpc_id      = aws_vpc.dev-vpc.id
+
+  ingress {
+    description      = "alb-sg"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    
+  }
+
+  ingress {
+    description      = "alb-sg"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
+resource "aws_security_group" "webserver-sg" {
+  name        = "webserver-sg"
+  description = "webserver-sg"
+  vpc_id      = aws_vpc.dev-vpc.id
+
+  ingress {
+    description      = "webserver-sg"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    
+  }
+
+  ingress {
+    description      = "webserver-sg"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+
+  tags = {
+    Name = "webserver-sg"
+  }
+}
