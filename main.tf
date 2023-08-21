@@ -60,3 +60,106 @@ resource "aws_subnet" "dev-private-subnet2" {
     "Name" = "dev-private-subnet2"
   }
 }
+
+resource "aws_eip" "dev-eip1" {
+  tags = {
+    "Name" = "dev-eip1"
+  }
+  
+}
+
+resource "aws_eip" "dev-eip2" {
+  tags = {
+    "Name" = "dev-eip2"
+  }
+  
+}
+
+resource "aws_nat_gateway" "dev-ngw1" {
+  allocation_id = aws_eip.dev-eip1.id
+  subnet_id     = aws_subnet.dev-public-subnet1.id
+
+  tags = {
+    "Name" = "dev-ngw1"
+  }
+  depends_on = [aws_internet_gateway.dev-gw]
+}
+
+resource "aws_nat_gateway" "dev-ngw2" {
+  allocation_id = aws_eip.dev-eip2.id
+  subnet_id     = aws_subnet.dev-public-subnet2.id
+
+  tags = {
+    "Name" = "dev-ngw2"
+  }
+  depends_on = [aws_internet_gateway.dev-gw]
+}
+
+resource "aws_route_table" "dev-public-rt" {
+  vpc_id = aws_vpc.dev-vpc.id
+
+  route = []
+
+  tags = {
+    Name = "dev-public-rt"
+  }
+}
+
+resource "aws_route" "public-internet-route" {
+  route_table_id            = aws_route_table.dev-public-rt.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.dev-gw.id
+}
+
+resource "aws_route_table_association" "public-rt-assoc1" {
+  subnet_id      = aws_subnet.dev-public-subnet1.id
+  route_table_id = aws_route_table.dev-public-rt.id
+}
+
+resource "aws_route_table_association" "public-rt-assoc2" {
+  subnet_id      = aws_subnet.dev-public-subnet2.id
+  route_table_id = aws_route_table.dev-public-rt.id
+}
+
+resource "aws_route_table" "dev-private-rt1" {
+  vpc_id = aws_vpc.dev-vpc.id
+
+  route = []
+
+  tags = {
+    Name = "dev-private-rt1"
+  }
+}
+
+resource "aws_route_table" "dev-private-rt2" {
+  vpc_id = aws_vpc.dev-vpc.id
+
+  route = []
+
+  tags = {
+    Name = "dev-private-rt2"
+  }
+}
+
+resource "aws_route" "private-internet-route1" {
+  route_table_id            = aws_route_table.dev-private-rt1.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = aws_nat_gateway.dev-ngw1.id
+}
+
+resource "aws_route" "private-internet-route2" {
+  route_table_id            = aws_route_table.dev-private-rt2.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = aws_nat_gateway.dev-ngw2.id
+}
+
+resource "aws_route_table_association" "private-rt-assoc1" {
+  subnet_id      = aws_subnet.dev-private-subnet1.id
+  route_table_id = aws_route_table.dev-private-rt1.id
+}
+
+resource "aws_route_table_association" "private-rt-assoc2" {
+  subnet_id      = aws_subnet.dev-private-subnet2.id
+  route_table_id = aws_route_table.dev-private-rt2.id
+}
+
