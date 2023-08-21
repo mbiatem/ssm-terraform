@@ -141,13 +141,13 @@ resource "aws_route_table" "dev-private-rt2" {
   }
 }
 
-resource "aws_route" "private-internet-route1" {
+resource "aws_route" "private-internet-rt1" {
   route_table_id            = aws_route_table.dev-private-rt1.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.dev-ngw1.id
 }
 
-resource "aws_route" "private-internet-route2" {
+resource "aws_route" "private-internet-rt2" {
   route_table_id            = aws_route_table.dev-private-rt2.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.dev-ngw2.id
